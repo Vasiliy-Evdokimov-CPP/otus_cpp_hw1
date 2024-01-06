@@ -98,7 +98,8 @@ jobs:
           draft: false
           prerelease: false
 
-      - run: ls -la
+      - name: XDTesting Print Directory Structure
+        uses: FiorelaCiroku/XDTesting-Print-Directory-Structure@v1.0.2
 
       - name: Upload Release Asset Windows
         id: upload-release-asset
