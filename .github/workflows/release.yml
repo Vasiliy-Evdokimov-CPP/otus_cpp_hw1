@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
 
-    # outputs:
-    #   output1: ${{ steps.step_out.outputs.test }}
+    outputs:
+      output1: ${{ steps.step_out.outputs.test }}
 
     steps:
       - name: Checkout
@@ -46,12 +46,12 @@ jobs:
           asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
-      # - id: step_out
-      #   run: echo "test="${{ steps.create_release.outputs.upload_url }} >> "$GITHUB_OUTPUT"
+      - id: step_out
+        run: echo "test="${{ steps.create_release.outputs.upload_url }} >> "$GITHUB_OUTPUT"
   build_windows:
     runs-on: windows-latest
     needs: build_ubuntu
-    permissions: read-all
+    permissions: write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -96,10 +96,10 @@ jobs:
           draft: false
           prerelease: false
 
-      # - name: upload_url echo
-      #   env:
-      #     UUR:  ${{ needs.build_ubuntu.outputs.output1 }}
-      #   run: echo "upload_url = $UUR ="
+      - name: upload_url echo
+        env:
+          UUR:  ${{ needs.build_ubuntu.outputs.output1 }}
+        run: echo "upload_url = $UUR ="
 
       - name: Upload Release Asset Windows
         id: upload-release-asset
@@ -107,7 +107,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.build_ubuntu.outputs.upload_url }} # needs.build_ubuntu.outputs.upload_url # steps.create_release.outputs.upload_url
+          upload_url: ${{ needs.build_ubuntu.outputs.output1 }} # needs.build_ubuntu.outputs.upload_url # steps.create_release.outputs.upload_url
           asset_path: ./helloworld-0.0.${{ github.run_number }}-win64.zip
           asset_name: helloworld-0.0.${{ github.run_number }}-win64.zip
           asset_content_type: application/zip
