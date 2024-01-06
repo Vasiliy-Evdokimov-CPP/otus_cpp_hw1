@@ -11,6 +11,10 @@ jobs:
   build_ubuntu:
     runs-on: ubuntu-latest
     permissions: write-all
+
+    outputs:
+      output1: ${{ steps.step_out.outputs.test }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,7 +37,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset Ubuntu
-        id: upload-release-asset_u
+        id: upload-release-asset_u        
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,10 +46,12 @@ jobs:
           asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
+      - id: step_out
+        run: echo "test="${{ steps.create_release_u.outputs.upload_url }} >> "$GITHUB_OUTPUT"
   build_windows:
     runs-on: windows-latest
     needs: build_ubuntu
-    permissions: write-all
+    permissions: read-all
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -92,7 +98,7 @@ jobs:
 
       - name: upload_url echo
         env:
-          UUR:  ${{ needs.build_ubuntu.outputs.upload_url }}
+          UUR:  ${{ needs.build_ubuntu.outputs.output1 }}
         run: echo "upload_url = $UUR ="
 
       - name: Upload Release Asset Windows
