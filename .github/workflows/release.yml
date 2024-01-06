@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
 
-    outputs:
-      output1: ${{ steps.step_out.outputs.test }}
+    # outputs:
+    #   output1: ${{ steps.step_out.outputs.test }}
 
     steps:
       - name: Checkout
@@ -27,7 +27,7 @@ jobs:
       # - run: cmake --build . --target test
       - run: cmake --build . --target package
       - name: Create Release
-        id: create_release_u
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,17 +37,17 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset Ubuntu
-        id: upload-release-asset_u        
+        id: upload-release-asset        
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release_u.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
-      - id: step_out
-        run: echo "test="${{ steps.create_release_u.outputs.upload_url }} >> "$GITHUB_OUTPUT"
+      # - id: step_out
+      #   run: echo "test="${{ steps.create_release.outputs.upload_url }} >> "$GITHUB_OUTPUT"
   build_windows:
     runs-on: windows-latest
     needs: build_ubuntu
@@ -86,7 +86,7 @@ jobs:
       # - run: cmake --build . --target test
       - run: cmake --build . --target package
       - name: Create Release
-        id: create_release_w
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -96,13 +96,13 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: upload_url echo
-        env:
-          UUR:  ${{ needs.build_ubuntu.outputs.output1 }}
-        run: echo "upload_url = $UUR ="
+      # - name: upload_url echo
+      #   env:
+      #     UUR:  ${{ needs.build_ubuntu.outputs.output1 }}
+      #   run: echo "upload_url = $UUR ="
 
       - name: Upload Release Asset Windows
-        id: upload-release-asset_w
+        id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
