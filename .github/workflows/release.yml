@@ -71,16 +71,19 @@ jobs:
             toolset: msvc
             # NOTE: If a boost version matching all requirements cannot be found,
             # this build step will fail
-            
+
       - name: Configure CMake
         run: |
           cmake . 
-          -DPATCH_VERSION=${{ github.run_number }}
           -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build\
           -DBoost_INCLUDE_DIR=${{steps.install-boost.outputs.BOOST_ROOT}}/include\
           -DBoost_LIBRARY_DIRS=${{steps.install-boost.outputs.BOOST_ROOT}}/lib
         env:
-          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}      
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+
+      - run: ls -la
+
+      - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
       - run: cmake --build .
       - run: cmake --build . --target test
       - run: cmake --build . --target package
