@@ -47,7 +47,9 @@ jobs:
           asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
       - id: step_out
-        run: echo "test="${{ steps.create_release.outputs.upload_url }} >> "$GITHUB_OUTPUT"
+        env:
+          out1: ${{ steps.create_release.outputs.upload_url }}
+        run: echo "test=$out1" >> "$GITHUB_OUTPUT"
       - run: echo ${{ job.status.outputs.output1 }}
   build_windows:
     runs-on: windows-latest
