@@ -46,11 +46,12 @@ jobs:
           asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
+
       - id: step_out
         env:
           out1: ${{ steps.create_release.outputs.upload_url }}
         run: echo "test=$out1" >> "$GITHUB_OUTPUT"
-      - run: echo ${{ job.status.outputs.output1 }}
+
   build_windows:
     runs-on: windows-latest
     needs: build_ubuntu
@@ -98,11 +99,6 @@ jobs:
           release_name: Release ${{ github.run_number }}
           draft: false
           prerelease: false
-
-      - name: upload_url echo
-        env:
-          UUR:  ${{ needs.build_ubuntu.outputs.output1 }}
-        run: echo "upload_url = $UUR ="
 
       - name: Upload Release Asset Windows
         id: upload-release-asset
