@@ -59,6 +59,9 @@ if (MSVC)
     target_compile_options(test_version PRIVATE
         /W4
     )
+
+    set(CPACK_GENERATOR ZIP)
+
 else ()
     target_compile_options(helloworld_cli PRIVATE
         -Wall -Wextra -pedantic -Werror
@@ -69,6 +72,9 @@ else ()
     target_compile_options(test_version PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
+
+    set(CPACK_GENERATOR DEB)
+
 endif()
 
 # указываем, что при установке (копировании) цели с именем "helloworld_cli", 
@@ -76,7 +82,7 @@ endif()
 install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
 
 # устанавливаем генератор упаковки на "DEB" - будут сгенерирован пакет .deb для упаковки проекта
-set(CPACK_GENERATOR DEB)
+# set(CPACK_GENERATOR DEB)
 
 # устанавливаем переменные, используемые CPack (инструмент для упаковки проекта в различные форматы пакетов) для версии пакета
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
