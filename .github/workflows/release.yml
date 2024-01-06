@@ -23,7 +23,7 @@ jobs:
       # - run: cmake --build . --target test
       - run: cmake --build . --target package
       - name: Create Release
-        id: create_release
+        id: create_release_u
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -33,12 +33,12 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset Ubuntu
-        id: upload-release-asset
+        id: upload-release-asset_u
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release_u.outputs.upload_url }}
           asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
@@ -80,7 +80,7 @@ jobs:
       # - run: cmake --build . --target test
       - run: cmake --build . --target package
       - name: Create Release
-        id: create_release
+        id: create_release_w
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -93,10 +93,10 @@ jobs:
       - name: upload_url echo
         env:
           UUR:  ${{ needs.build_ubuntu.outputs.upload_url }}
-        run: echo "upload_url $UUR"
+        run: echo "upload_url = $UUR ="
 
       - name: Upload Release Asset Windows
-        id: upload-release-asset
+        id: upload-release-asset_w
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
