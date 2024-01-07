@@ -1,5 +1,5 @@
 # определяем минимальную версию CMake, при помощи которой можно обрабатывать текущий файл проекта
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 # устанавливаем кэшированную переменную PATCH_VERSION со значением "2"
 set(PATCH_VERSION "2" CACHE INTERNAL "Patch version")
@@ -104,11 +104,41 @@ set(CPACK_PACKAGE_CONTACT vasiliyevdokimov84@gmail.com)
 # включаем использование CPack в проекте
 include(CPack)
 
+# https://github.com/google/googletest/blob/main/docs/quickstart-cmake.md
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+
 # включаем поддержку тестирования в проекте
 enable_testing()
 
+add_executable(
+  hello_test
+  hello_test.cc
+)
+
+target_link_libraries(
+  hello_test
+  GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(hello_test)
+
+# include(GoogleTest)
+# gtest_discover_tests(hello_test)
+
+
+
 # добавляем тест с именем "test_version", который запускает исполняемый файл с именем "test_version"
 # add_test(test_version test_version)
+
 add_test(NAME TestVersion COMMAND test_version)
 set_tests_properties(TestVersion PROPERTIES FAIL_REGULAR_EXPRESSION "FAIL")
 set_tests_properties(TestVersion PROPERTIES LABELS "Version is equal to 100")
