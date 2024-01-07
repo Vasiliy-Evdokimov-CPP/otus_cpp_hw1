@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 3.10)
 set(PATCH_VERSION "2" CACHE INTERNAL "Patch version")
 # устанавливаем переменную PROJECT_VERSION
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
+# переменной @PROJECT_VERSION_PATCH@, используемой в version.h.in,
+# присваивается значение именно из полного номера версии, указанного на этом шаге
+# (если я правильно понял)
 
 # устанавливаем имя проекта и версию
 project(helloworld VERSION ${PROJECT_VESRION})
@@ -64,6 +67,7 @@ if (MSVC)
     #     /W4
     # )
 
+    # устанавливаем генератор упаковки на "ZIP" - файл релиза будет упакован в .zip архив
     set(CPACK_GENERATOR ZIP)
 
 else ()
@@ -77,6 +81,7 @@ else ()
     #     -Wall -Wextra -pedantic -Werror
     # )
 
+    # устанавливаем генератор упаковки на "DEB" - будут сгенерирован пакет .deb для упаковки проекта
     set(CPACK_GENERATOR DEB)
 
 endif()
@@ -84,9 +89,6 @@ endif()
 # указываем, что при установке (копировании) цели с именем "helloworld_cli", 
 # ее исполняемый файл должен быть скопирован в папку "bin"
 install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
-
-# устанавливаем генератор упаковки на "DEB" - будут сгенерирован пакет .deb для упаковки проекта
-# set(CPACK_GENERATOR DEB)
 
 # устанавливаем переменные, используемые CPack (инструмент для упаковки проекта в различные форматы пакетов) для версии пакета
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
