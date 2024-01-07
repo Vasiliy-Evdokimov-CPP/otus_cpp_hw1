@@ -110,6 +110,5 @@ enable_testing()
 # добавляем тест с именем "test_version", который запускает исполняемый файл с именем "test_version"
 # add_test(test_version test_version)
 add_test(NAME TestVersion COMMAND test_version)
-set_tests_properties(TestVersion
-  PROPERTIES FAIL_REGULAR_EXPRESSION "FAIL"
-)
+set_tests_properties(TestVersion PROPERTIES FAIL_REGULAR_EXPRESSION "FAIL")
+set_tests_properties(TestVersion PROPERTIES LABELS "Version is not equal to 100")
