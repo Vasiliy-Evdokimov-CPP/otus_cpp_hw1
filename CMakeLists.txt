@@ -22,14 +22,14 @@ add_executable(helloworld_cli main.cpp)
 # создаем библиотеку с именем helloworld на основе lib.cpp
 add_library(helloworld lib.cpp)
 # создаем исполняемый файл test_version на основе test_version.cpp
-# add_executable(test_version test_version.cpp)
+add_executable(test_version test_version.cpp)
 
 # устанавливаем свойства для целей (targets) helloworld_cli, helloworld и test_version, 
 # указывая, что для них требуется стандарт C++ 14 и он обязателен для компиляции
 set_target_properties(
     helloworld_cli 
     helloworld 
-    # test_version 
+    test_version 
     PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
@@ -54,6 +54,9 @@ target_link_libraries(helloworld_cli PRIVATE
 #     ${Boost_LIBRARIES}
 #     helloworld
 # )
+target_link_libraries(test_version
+    helloworld
+)
 
 # определяем для целей опции компиляторов (MSVC и прочих)
 if (MSVC)
@@ -63,9 +66,9 @@ if (MSVC)
     target_compile_options(helloworld PRIVATE
         /W4
     )
-    # target_compile_options(test_version PRIVATE
-    #     /W4
-    # )
+    target_compile_options(test_version PRIVATE
+        /W4
+    )
 
     # устанавливаем генератор упаковки на "ZIP" - файл релиза будет упакован в .zip архив
     set(CPACK_GENERATOR ZIP)
@@ -77,9 +80,9 @@ else ()
     target_compile_options(helloworld PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
-    # target_compile_options(test_version PRIVATE
-    #     -Wall -Wextra -pedantic -Werror
-    # )
+    target_compile_options(test_version PRIVATE
+        -Wall -Wextra -pedantic -Werror
+    )
 
     # устанавливаем генератор упаковки на "DEB" - будут сгенерирован пакет .deb для упаковки проекта
     set(CPACK_GENERATOR DEB)
@@ -102,7 +105,11 @@ set(CPACK_PACKAGE_CONTACT vasiliyevdokimov84@gmail.com)
 include(CPack)
 
 # включаем поддержку тестирования в проекте
-# enable_testing()
+enable_testing()
 
 # добавляем тест с именем "test_version", который запускает исполняемый файл с именем "test_version"
 # add_test(test_version test_version)
+add_test(NAME TestVersion COMMAND test_version)
+set_tests_properties(TestVersion
+  PROPERTIES FAIL_REGULAR_EXPRESSION "FAIL"
+)
