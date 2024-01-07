@@ -23,10 +23,11 @@ jobs:
       # - run: sudo apt-get update && sudo apt-get install cmake libboost-test-dev -y    
       - run: sudo apt-get update && sudo apt-get install cmake -y
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
-      - run: cmake --build .
+      - run: cmake --build . --config Release
       # - run: cmake --build . --target test      
-      # - run: cmake --build . --target package
-      - run: cmake --build . --config Release --target package
+      - run: cmake --build . --target package
+      - run: ctest -C Release
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -87,10 +88,10 @@ jobs:
       #     BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}     
 
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
-      - run: cmake --build .
+      - run: cmake --build . --config Release
       # - run: cmake --build . --target test
-      # - run: cmake --build . --target package
-      - run: cmake --build . --config Release --target package
+      - run: cmake --build . --target package
+      - run: ctest -C Release
 
       - name: Upload Release Asset Windows
         id: upload-release-asset
