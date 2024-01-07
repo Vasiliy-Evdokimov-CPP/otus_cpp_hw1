@@ -11,10 +11,8 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 # устанавливаем имя проекта и версию
 project(helloworld VERSION ${PROJECT_VESRION})
-# ищем и подключаем библиотеку Boost с компонентом unit_test_framework (фреймворк для модульного тестирования) в проект 
-# find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
-# копируем файл version.h.in в файл version.h, при этом выполняя подстановку переменных внутри файла
+# копируем файл version.h.in в файл version.h, при этом выполняя подстановку переменной внутри файла
 configure_file(version.h.in version.h)
 
 # создаем исполняемый файл helloworld_cli на основе main.cpp
@@ -24,12 +22,29 @@ add_library(helloworld lib.cpp)
 # создаем исполняемый файл test_version на основе test_version.cpp
 add_executable(test_version test_version.cpp)
 
+# GTest 
+
+# создаем исполняемый файл gtest_version на основе gtest_version.cpp
+add_executable(gtest_version gtest_version.cpp)
+
+# подключаем GTest
+# https://github.com/google/googletest/blob/main/docs/quickstart-cmake.md
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 # устанавливаем свойства для целей (targets) helloworld_cli, helloworld и test_version, 
 # указывая, что для них требуется стандарт C++ 14 и он обязателен для компиляции
 set_target_properties(
     helloworld_cli 
     helloworld 
-    test_version 
+    test_version
+    gtest_version 
     PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
@@ -39,23 +54,19 @@ set_target_properties(
 target_include_directories(helloworld
     PRIVATE "${CMAKE_BINARY_DIR}"
 )
-# устанавливаем свойства для цели test_version, добавляя определение препроцессора BOOST_TEST_DYN_LINK
-# и директорию ${Boost_INCLUDE_DIR} в качестве директории для поиска заголовочных файлов
-# set_target_properties(test_version PROPERTIES
-#     COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
-#     INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
-# )
 
-# связываем зависимости для целей helloworld_cli и test_version
+# связываем зависимости для целей
 target_link_libraries(helloworld_cli PRIVATE
     helloworld
 )
-# target_link_libraries(test_version
-#     ${Boost_LIBRARIES}
-#     helloworld
-# )
+
 target_link_libraries(test_version
     helloworld
+)
+
+target_link_libraries(gtest_version
+    helloworld
+    GTest::gtest_main
 )
 
 # определяем для целей опции компиляторов (MSVC и прочих)
@@ -104,41 +115,13 @@ set(CPACK_PACKAGE_CONTACT vasiliyevdokimov84@gmail.com)
 # включаем использование CPack в проекте
 include(CPack)
 
-# https://github.com/google/googletest/blob/main/docs/quickstart-cmake.md
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-
 # включаем поддержку тестирования в проекте
 enable_testing()
 
-add_executable(
-  hello_test
-  hello_test.cc
-)
-
-target_link_libraries(
-  hello_test
-  GTest::gtest_main
-)
-
+# включаем использование GoogleTest
 include(GoogleTest)
-gtest_discover_tests(hello_test)
+gtest_discover_tests(gtest_version)
 
-# include(GoogleTest)
-# gtest_discover_tests(hello_test)
-
-
-
-# добавляем тест с именем "test_version", который запускает исполняемый файл с именем "test_version"
-# add_test(test_version test_version)
-
+# добавляем тест CTest
 add_test(NAME TestVersion COMMAND test_version)
 set_tests_properties(TestVersion PROPERTIES FAIL_REGULAR_EXPRESSION "FAIL")
-set_tests_properties(TestVersion PROPERTIES LABELS "Version is equal to 100")
