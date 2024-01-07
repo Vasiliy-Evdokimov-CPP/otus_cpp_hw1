@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number }}_Linux
+          tag_name: ${{ github.run_number }}
           release_name: Release ${{ github.run_number }}
           draft: false
           prerelease: false
@@ -89,16 +89,18 @@ jobs:
       - run: cmake --build .
       # - run: cmake --build . --target test
       - run: cmake --build . --target package
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.run_number }}_Windows
-          release_name: Release ${{ github.run_number }}
-          draft: false
-          prerelease: false
+      # - run: cmake --build . --config Release
+      
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.run_number }}_Windows
+      #     release_name: Release ${{ github.run_number }}
+      #     draft: false
+      #     prerelease: false
 
       - name: Upload Release Asset Windows
         id: upload-release-asset
